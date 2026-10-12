@@ -38,8 +38,7 @@ def main():
   print("Top CPU Using Processes")
   print("-" * 40)
   for p in system_data["Processes"][:5]:
-    #FIXME: not comparing "NONE" value correct 
-    if p['cpu_percent'] == 'None':
+    if (p['cpu_percent']) == None:
       print(f"{p['name']}: {p['cpu_percent']}")
     else:
       print(f"{p['name']}: {p['cpu_percent']}%")
@@ -47,12 +46,14 @@ def main():
 
   print("Network status")
   print("-" * 40)
-  # FIXME: There seems to be a error with speed readings
   for interface, stats in system_data["Network"].items():
-    status = "Online" if stats["Upstate"] else "OfLine"
+    status = "Online" if stats["Upstate"] else "OffLine"
     print(f"Interface: {interface}")
     print(f"Status: {status}")
-    print(f"Speed: {stats['Speed']} Mbps")
+    if stats['Speed'] == 0:
+      print(f"Speed: undetermined")
+    else :
+      print(f"Speed: {stats['Speed']} Mbps")
     print()
 
   print("-" * 40)
