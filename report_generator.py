@@ -15,7 +15,7 @@ def create_html_report(system_data, output_file='system_report.html'):
             'CPU': system_data['CPU'],
             'Memory': system_data['Memory'],
             'Disk': system_data['Disk'],
-            'Network': system_data['Network'],
+            'Network': system_data['Network'],  # This now contains your Internet status and adapters
             'Processes': system_data['Processes'][:10]
         }
         

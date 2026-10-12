@@ -1,6 +1,7 @@
 import psutil
 import platform
 import time
+import socket
 from datetime import datetime
 
 def get_disk_info():
@@ -46,17 +47,20 @@ def get_cpu_info():
   return {"Current usage": 0.0}
 
 def get_network_info():
-  network_info = {}
-  try:
-    interfaces = psutil.net_if_stats()
-    for interface, stats in interfaces.items():
-      network_info[interface] = {
-        "Upstate": stats.isup,
-        "Speed": stats.speed
-      }
-  except Exception as e:
-    print(f"Error getting network information: {e}")
-  return network_info
+    network_info = {"Internet_Connected": check_internet_connectivity()}
+    try:
+        interfaces = psutil.net_if_stats()
+        adapter_stats = {}
+        for interface, stats in interfaces.items():
+            adapter_stats[interface] = {
+                "Upstate": stats.isup,
+                "Speed": stats.speed
+            }
+        network_info["Adapters"] = adapter_stats
+    except Exception as e:
+        print(f"Error getting network information: {e}")
+        
+    return network_info
 
 def get_general_system_info():
   try:
@@ -107,6 +111,16 @@ def get_processes():
   except Exception as e:
     print(f"Error getting Process Information: {e}")
   return []
+import socket
+
+def check_internet_connectivity(host="8.8.8.8", port=53, timeout=3):
+    """Tests if the machine has active internet access by connecting to a public DNS."""
+    try:
+        socket.setdefaulttimeout(timeout)
+        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
+        return True
+    except socket.error:
+        return False
 
 def gather_all_info():
   return {
@@ -116,5 +130,6 @@ def gather_all_info():
     "Memory": get_memory_info(),
     "Disk": get_disk_info(),
     "Network": get_network_info(),
+    "Internet": {"Connected": check_internet_connectivity()},
     "Processes": get_processes()
   }

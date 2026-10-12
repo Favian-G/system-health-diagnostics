@@ -54,7 +54,14 @@ def main():
 
   print("Network status")
   print("-" * 40)
-  for interface, stats in system_data.get("Network", {}).items():
+  
+  network_data = system_data.get("Network", {})
+  
+  internet_status = "Online" if network_data.get("Internet_Connected") else "Offline"
+  print(f"Internet Access: {internet_status}\n")
+  
+  adapters = network_data.get("Adapters", {})
+  for interface, stats in adapters.items():
     status = "Online" if stats.get("Upstate") else "Offline"
     print(f"Interface: {interface}")
     print(f"Status: {status}")

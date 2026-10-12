@@ -33,7 +33,15 @@
     <div class="summary">
       <h2>Quick Status</h2>
       <p>Total CPU Usage: <strong>{{ CPU['Current usage'] }}%</strong></p>
-      <p>Memory Utilization: <strong>{{ Memory.Used }} GB</strong> used of {{ Memory.Total }} GB ({{ Memory.Available }} GB available)</p>
+      <p>Memory Utilization: <strong>{{ Memory['Used'] }} GB</strong> used of {{ Memory['Total'] }} GB</p>
+      
+      <p>Internet Connection: 
+        {% if Network.get('Internet_Connected') %}
+          <strong style="color: green;">Online (Connected)</strong>
+        {% else %}
+          <strong style="color: red;">Offline (No Internet)</strong>
+        {% endif %}
+      </p>
     </div>
     
     <!-- System Info -->
