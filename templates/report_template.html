@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>System Report</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; }
+    .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .summary { background: #e8f5e9; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+    .section { margin: 15px 0; border: 1px solid #ddd; border-radius: 5px; }
+    .section-title { 
+      padding: 15px; 
+      background: #f9f9f9; 
+      cursor: pointer; 
+      font-weight: bold;
+      user-select: none;
+    }
+    .section-content { 
+      padding: 15px; 
+      display: none; 
+      border-top: 1px solid #ddd;
+    }
+    .section.open .section-content { display: block; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { text-align: left; padding: 8px; border-bottom: 1px solid #ddd; }
+    th { background-color: #f2f2f2; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>System Health Report</h1>
+    <p>Generated on: <strong>{{ Timestamp }}</strong></p>
+    
+    <div class="summary">
+      <h2>Quick Status</h2>
+      <p>Total CPU Usage: <strong>{{ CPU['Current usage'] }}%</strong></p>
+      <p>Memory Utilization: <strong>{{ Memory.Used }} GB</strong> used of {{ Memory.Total }} GB ({{ Memory.Available }} GB available)</p>
+    </div>
+    
+    <!-- System Info -->
+    <div class="section">
+      <div class="section-title" onclick="toggleSection(this)">▼ System Information</div>
+      <div class="section-content">
+        <p><strong>OS:</strong> {{ System.OS }}</p>
+        <p><strong>Version:</strong> {{ System.Version }}</p>
+        <p><strong>Architecture:</strong> {{ System.Machine }}</p>
+      </div>
+    </div>
+    
+    <!-- Disk Info -->
+    <div class="section">
+      <div class="section-title" onclick="toggleSection(this)">▼ Disk Information</div>
+      <div class="section-content">
+        {% for mount, info in Disk.items() %}
+          <h3>Drive: {{ mount }}</h3>
+          <p>Used: {{ info.Used }} GB / {{ info.Total }} GB ({{ info.Free }} GB free)</p>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Top Processes -->
+    <div class="section">
+      <div class="section-title" onclick="toggleSection(this)">▼ Top 10 Processes by CPU</div>
+      <div class="section-content">
+        <table>
+          <tr>
+            <th>PID</th>
+            <th>Name</th>
+            <th>CPU %</th>
+          </tr>
+          {% for proc in Processes %}
+          <tr>
+            <td>{{ proc.get('pid', 'N/A') }}</td>
+            <td>{{ proc.get('name', 'Unknown') }}</td>
+            <td>{{ proc.get('cpu_percent') if proc.get('cpu_percent') is not none else 0 }}%</td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+    </div>
+    
+  </div>
+  
+  <script>
+    function toggleSection(headerElement) {
+      headerElement.parentElement.classList.toggle('open');
+    }
+  </script>
+</body>
+</html>
